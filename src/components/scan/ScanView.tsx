@@ -28,14 +28,18 @@ import { UploadResultModal } from './UploadResultModal';
 import { MercuryMascot } from '../illustrations/MercuryMascot';
 import { MercuryLogo } from '../common/MercuryLogo';
 
+import { UserAccount } from '../../types';
+
 interface ScanViewProps {
   onProductCreated: (newProduct: ProductItem) => void;
   onNavigateToDatabase: () => void;
+  currentUser?: UserAccount | null;
 }
 
 export const ScanView: React.FC<ScanViewProps> = ({
   onProductCreated,
-  onNavigateToDatabase
+  onNavigateToDatabase,
+  currentUser
 }) => {
   const [step, setStep] = useState<number>(1);
   const [paperSource, setPaperSource] = useState<PaperSource>('mercury');
@@ -681,6 +685,7 @@ export const ScanView: React.FC<ScanViewProps> = ({
           paperSource={paperSource}
           batchCode={batchCode}
           photoUrl={imageSrc}
+          currentUser={currentUser}
           onSaveSuccess={(newProd) => {
             onProductCreated(newProd);
             onNavigateToDatabase();

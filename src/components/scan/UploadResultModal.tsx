@@ -16,6 +16,8 @@ import {
 import { StatusBadge } from '../common/StatusBadge';
 import { MercuryMascot } from '../illustrations/MercuryMascot';
 
+import { UserAccount } from '../../types';
+
 interface UploadResultModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -24,6 +26,7 @@ interface UploadResultModalProps {
   batchCode?: string;
   photoUrl: string;
   onSaveSuccess: (newProduct: ProductItem) => void;
+  currentUser?: UserAccount | null;
 }
 
 export const UploadResultModal: React.FC<UploadResultModalProps> = ({
@@ -33,7 +36,8 @@ export const UploadResultModal: React.FC<UploadResultModalProps> = ({
   paperSource,
   batchCode,
   photoUrl,
-  onSaveSuccess
+  onSaveSuccess,
+  currentUser
 }) => {
   const [productName, setProductName] = useState('');
   const [brand, setBrand] = useState('');
@@ -42,7 +46,7 @@ export const UploadResultModal: React.FC<UploadResultModalProps> = ({
   const [category, setCategory] = useState<ProductCategory>('krim_malam');
   const [purchaseLocation, setPurchaseLocation] = useState<PurchaseLocation>('ecommerce');
   const [testerNotes, setTesterNotes] = useState('');
-  const [testerName, setTesterName] = useState('Kontributor Komunitas (Anonim)');
+  const [testerName, setTesterName] = useState(currentUser?.name || 'Kontributor Komunitas (Anonim)');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessScreen, setShowSuccessScreen] = useState(false);
   const [createdProduct, setCreatedProduct] = useState<ProductItem | null>(null);

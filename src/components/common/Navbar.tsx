@@ -12,7 +12,7 @@ import {
   ShieldCheck
 } from 'lucide-react';
 import { BPOM_OFFICIAL_URL } from '../../config/constants';
-
+import { UserAccount } from '../../types';
 import { MercuryLogo } from './MercuryLogo';
 
 interface NavbarProps {
@@ -20,15 +20,24 @@ interface NavbarProps {
   onNavigate: (tab: string) => void;
   cartCount: number;
   onOpenCart: () => void;
+  currentUser?: UserAccount | null;
+  onOpenAuth?: (mode?: 'login' | 'register') => void;
+  onLogout?: () => void;
+  onOpenChat?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   currentTab,
   onNavigate,
   cartCount,
-  onOpenCart
+  onOpenCart,
+  currentUser = null,
+  onOpenAuth,
+  onLogout,
+  onOpenChat
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   // Updated tab names: "Database" -> "Hasil Tes"
   const navItems = [
@@ -104,13 +113,24 @@ export const Navbar: React.FC<NavbarProps> = ({
             })}
           </nav>
 
-          {/* Right Action Icons (Cart & BPOM external link) */}
+          {/* Right Action Icons (AI Chat, Cart, Auth, & BPOM external link) */}
           <div className="flex items-center gap-2">
+            {onOpenChat && (
+              <button
+                onClick={onOpenChat}
+                className="hidden lg:inline-flex items-center gap-1.5 text-xs text-[#0F4C5C] hover:bg-teal-50 px-3 py-1.5 rounded-xl border border-teal-200/80 font-bold transition-all cursor-pointer"
+                title="Tanya Asisten AI Merqi"
+              >
+                <Sparkles size={14} className="text-[#E8837A]" />
+                <span>Asisten AI</span>
+              </button>
+            )}
+
             <a
               href={BPOM_OFFICIAL_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden lg:inline-flex items-center gap-1.5 text-xs text-slate-600 hover:text-[#0F4C5C] px-3 py-1.5 rounded-xl border border-slate-200 hover:border-slate-300 font-semibold transition-colors"
+              className="hidden xl:inline-flex items-center gap-1.5 text-xs text-slate-600 hover:text-[#0F4C5C] px-3 py-1.5 rounded-xl border border-slate-200 hover:border-slate-300 font-semibold transition-colors"
             >
               <ShieldCheck size={14} className="text-emerald-600" />
               <span>Cek BPOM</span>
@@ -120,7 +140,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Cart Button */}
             <button
               onClick={onOpenCart}
-              className="relative p-2.5 rounded-2xl text-slate-600 hover:text-[#0F4C5C] hover:bg-slate-100 transition-colors"
+              className="relative p-2.5 rounded-2xl text-slate-600 hover:text-[#0F4C5C] hover:bg-slate-100 transition-colors cursor-pointer"
               aria-label="Keranjang Belanja"
             >
               <ShoppingBag size={20} />
@@ -131,10 +151,76 @@ export const Navbar: React.FC<NavbarProps> = ({
               )}
             </button>
 
+            {/* User Account / Auth Button (Desktop) */}
+            <div className="hidden sm:relative sm:block">
+              {currentUser ? (
+                <div className="relative">
+                  <button
+                    onClick={() => setUserMenuOpen(!userMenuOpen)}
+                    className="flex items-center gap-2 p-1 pl-1.5 pr-3 rounded-full border border-slate-200 hover:border-[#0F4C5C]/30 bg-slate-50/80 hover:bg-white text-xs font-bold text-slate-700 transition-all cursor-pointer"
+                  >
+                    <div className="w-7 h-7 rounded-full bg-[#0F4C5C] text-white flex items-center justify-center text-[11px] font-extrabold shadow-2xs">
+                      {currentUser.initials}
+                    </div>
+                    <span className="max-w-[80px] truncate">{currentUser.name.split(' ')[0]}</span>
+                  </button>
+
+                  {/* Dropdown Menu */}
+                  {userMenuOpen && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 z-50 animate-scaleUp">
+                      <div className="px-4 py-2 border-b border-slate-100">
+                        <p className="text-xs font-extrabold text-slate-800 line-clamp-1">{currentUser.name}</p>
+                        <p className="text-[10px] text-slate-400 truncate">{currentUser.email}</p>
+                      </div>
+
+                      <button
+                        onClick={() => {
+                          handleNavClick('akun');
+                          setUserMenuOpen(false);
+                        }}
+                        className="w-full px-4 py-2.5 text-left text-xs font-bold text-slate-700 hover:bg-slate-50 flex items-center gap-2 cursor-pointer"
+                      >
+                        <User size={14} className="text-[#0F4C5C]" />
+                        <span>Profil & Riwayat Tes</span>
+                      </button>
+
+                      {onLogout && (
+                        <button
+                          onClick={() => {
+                            setUserMenuOpen(false);
+                            onLogout();
+                          }}
+                          className="w-full px-4 py-2.5 text-left text-xs font-bold text-red-600 hover:bg-red-50 flex items-center gap-2 border-t border-slate-100 cursor-pointer"
+                        >
+                          <X size={14} />
+                          <span>Keluar (Log Out)</span>
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="flex items-center gap-1.5">
+                  <button
+                    onClick={() => onOpenAuth ? onOpenAuth('login') : handleNavClick('akun')}
+                    className="px-3.5 py-2 rounded-xl text-xs font-extrabold text-[#0F4C5C] hover:bg-teal-50 transition-colors cursor-pointer"
+                  >
+                    Masuk
+                  </button>
+                  <button
+                    onClick={() => onOpenAuth ? onOpenAuth('register') : handleNavClick('akun')}
+                    className="px-3.5 py-2 rounded-xl text-xs font-extrabold text-white bg-[#0F4C5C] hover:bg-[#166479] shadow-2xs transition-all cursor-pointer"
+                  >
+                    Daftar
+                  </button>
+                </div>
+              )}
+            </div>
+
             {/* Mobile Hamburger Toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 md:hidden rounded-xl text-slate-700 hover:bg-slate-100"
+              className="p-2 md:hidden rounded-xl text-slate-700 hover:bg-slate-100 cursor-pointer"
               aria-label="Menu navigasi"
             >
               {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
@@ -146,7 +232,69 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-5 space-y-1 shadow-lg animate-fadeIn">
+        <div className="md:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-5 space-y-2 shadow-lg animate-fadeIn">
+          
+          {/* User profile banner or quick login in mobile drawer */}
+          <div className="p-3 bg-slate-50 rounded-2xl mb-2 border border-slate-100">
+            {currentUser ? (
+              <div className="flex items-center justify-between">
+                <div 
+                  onClick={() => handleNavClick('akun')}
+                  className="flex items-center gap-2.5 cursor-pointer"
+                >
+                  <div className="w-9 h-9 rounded-full bg-[#0F4C5C] text-white flex items-center justify-center text-xs font-black">
+                    {currentUser.initials}
+                  </div>
+                  <div>
+                    <p className="text-xs font-black text-slate-800">{currentUser.name}</p>
+                    <p className="text-[10px] text-slate-400">{currentUser.email}</p>
+                  </div>
+                </div>
+
+                {onLogout && (
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      onLogout();
+                    }}
+                    className="text-xs font-bold text-red-600 px-2.5 py-1 rounded-lg border border-red-200 bg-white"
+                  >
+                    Keluar
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="flex items-center justify-between gap-2">
+                <div className="text-xs">
+                  <p className="font-extrabold text-slate-800">Punya akun MERCURY?</p>
+                  <p className="text-[10px] text-slate-500">Masuk untuk simpan riwayat tes</p>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      if (onOpenAuth) onOpenAuth('login');
+                      else handleNavClick('akun');
+                    }}
+                    className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-extrabold text-[#0F4C5C]"
+                  >
+                    Masuk
+                  </button>
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      if (onOpenAuth) onOpenAuth('register');
+                      else handleNavClick('akun');
+                    }}
+                    className="px-3 py-1.5 rounded-xl bg-[#0F4C5C] text-white text-xs font-extrabold"
+                  >
+                    Daftar
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
           {navItems.map((item) => {
             const isActive = currentTab === item.id;
             return (
@@ -166,6 +314,24 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             );
           })}
+          {onOpenChat && (
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onOpenChat();
+              }}
+              className="w-full flex items-center justify-between px-4 py-3 rounded-2xl bg-teal-50 text-[#0F4C5C] text-xs font-bold border border-teal-200/80 cursor-pointer"
+            >
+              <div className="flex items-center gap-2.5">
+                <Sparkles size={16} className="text-[#E8837A]" />
+                <span>Tanya Asisten AI Merqi</span>
+              </div>
+              <span className="text-[10px] bg-white px-2 py-0.5 rounded-full font-extrabold text-[#0F4C5C]">
+                Chatbot
+              </span>
+            </button>
+          )}
+
           <div className="pt-2 border-t border-slate-100">
             <a
               href={BPOM_OFFICIAL_URL}

@@ -21,6 +21,8 @@ import { ProductDetailModal } from './components/database/ProductDetailModal';
 import { ReportDataModal } from './components/modals/ReportDataModal';
 import { ManufacturerObjectionModal } from './components/modals/ManufacturerObjectionModal';
 import { CartModal } from './components/shop/CartModal';
+import { AuthModal } from './components/auth/AuthModal';
+import { ChatbotWidget } from './components/chat/ChatbotWidget';
 
 // Types & Data
 import { 
@@ -29,9 +31,11 @@ import {
   KitPackage, 
   UserOrder, 
   UserReport, 
-  ManufacturerObjection 
+  ManufacturerObjection,
+  UserAccount
 } from './types';
 import { INITIAL_PRODUCTS } from './data/mockProducts';
+import { INITIAL_USERS } from './data/mockUsers';
 import { motion, AnimatePresence } from 'motion/react';
 
 export default function App() {
@@ -97,6 +101,61 @@ export default function App() {
   const [isReportOpen, setIsReportOpen] = useState(false);
   const [isObjectionOpen, setIsObjectionOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+
+  // User Authentication state (persisted in localStorage)
+  const [currentUser, setCurrentUser] = useState<UserAccount | null>(() => {
+    try {
+      const saved = localStorage.getItem('mercury_current_user');
+      if (saved !== null) {
+        return saved === 'guest' ? null : JSON.parse(saved);
+      }
+    } catch (e) {
+      console.warn("Gagal memuat pengguna:", e);
+    }
+    // User is logged out by default unless previously logged in
+    return null;
+  });
+
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => {
+      setToastMessage((current) => (current === msg ? null : current));
+    }, 4000);
+  };
+
+  const handleLogin = (user: UserAccount, message?: string) => {
+    setCurrentUser(user);
+    setIsAuthModalOpen(false);
+    showToast(message || `Selamat datang kembali, ${user.name}!`);
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    showToast("Kamu telah berhasil keluar (log out).");
+  };
+
+  const handleOpenAuth = (mode: 'login' | 'register' = 'login') => {
+    setAuthModalMode(mode);
+    setIsAuthModalOpen(true);
+  };
+
+  // Sync current user to localStorage
+  useEffect(() => {
+    try {
+      if (currentUser) {
+        localStorage.setItem('mercury_current_user', JSON.stringify(currentUser));
+      } else {
+        localStorage.setItem('mercury_current_user', 'guest');
+      }
+    } catch (e) {
+      console.warn("Gagal menyimpan pengguna:", e);
+    }
+  }, [currentUser]);
 
   // Sync products to localStorage
   useEffect(() => {
@@ -212,7 +271,27 @@ export default function App() {
         }}
         cartCount={totalCartCount}
         onOpenCart={() => setIsCartOpen(true)}
+        currentUser={currentUser}
+        onOpenAuth={handleOpenAuth}
+        onLogout={handleLogout}
+        onOpenChat={() => setIsChatOpen(true)}
       />
+
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed top-20 right-4 sm:right-8 z-50 animate-fadeIn">
+          <div className="bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-xl border border-slate-700/80 flex items-center gap-2.5 text-xs font-semibold">
+            <span className="text-emerald-400">✓</span>
+            <span>{toastMessage}</span>
+            <button
+              onClick={() => setToastMessage(null)}
+              className="ml-2 text-slate-400 hover:text-white p-0.5"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Main Content Area with Smooth Motion Transitions */}
       <main className="flex-1 overflow-x-hidden">
@@ -256,6 +335,7 @@ export default function App() {
                   setCurrentTab('database');
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
+                currentUser={currentUser}
               />
             )}
 
@@ -276,6 +356,9 @@ export default function App() {
 
             {currentTab === 'akun' && (
               <AccountView
+                currentUser={currentUser}
+                onLogin={handleLogin}
+                onLogout={handleLogout}
                 products={products}
                 userOrders={userOrders}
                 onNavigateToScan={() => {
@@ -304,6 +387,7 @@ export default function App() {
           setCurrentTab(tab);
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
+        currentUser={currentUser}
       />
 
       {/* Modals */}
@@ -353,6 +437,24 @@ export default function App() {
         onUpdateQuantity={handleUpdateQuantity}
         onRemoveItem={handleRemoveFromCart}
         onOrderCompleted={handleOrderCompleted}
+      />
+
+      {/* Authentication Modal (Login / Register) */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onSuccess={handleLogin}
+        initialMode={authModalMode}
+      />
+
+      {/* AI Assistant Chatbot (Merqi) */}
+      <ChatbotWidget
+        onNavigateTab={(tab) => {
+          setCurrentTab(tab);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        isOpenExternal={isChatOpen}
+        onCloseExternal={() => setIsChatOpen(false)}
       />
 
     </div>

@@ -1,14 +1,17 @@
 import React from 'react';
 import { Home, Sparkles, Camera, ShoppingBag, User } from 'lucide-react';
+import { UserAccount } from '../../types';
 
 interface MobileBottomBarProps {
   currentTab: string;
   onNavigate: (tab: string) => void;
+  currentUser?: UserAccount | null;
 }
 
 export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
   currentTab,
-  onNavigate
+  onNavigate,
+  currentUser
 }) => {
   // 5 exact tabs specified by user: Beranda, Hasil Tes, Scan (center coral), Toko, Akun
   const tabs = [
@@ -16,7 +19,7 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
     { id: 'database', label: 'Hasil Tes', icon: Sparkles },
     { id: 'scan', label: 'Scan', icon: Camera, center: true },
     { id: 'toko', label: 'Toko', icon: ShoppingBag },
-    { id: 'akun', label: 'Akun', icon: User },
+    { id: 'akun', label: currentUser ? currentUser.name.split(' ')[0] : 'Akun', icon: User },
   ];
 
   return (
@@ -48,12 +51,20 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
             <button
               key={tab.id}
               onClick={() => onNavigate(tab.id)}
-              className={`flex flex-col items-center py-1 px-2.5 rounded-xl focus:outline-none transition-colors ${
+              className={`flex flex-col items-center py-1 px-2 rounded-xl focus:outline-none transition-colors ${
                 isActive ? 'text-[#0F4C5C] font-extrabold' : 'text-slate-500 hover:text-slate-800'
               }`}
             >
-              <Icon size={20} className={isActive ? 'stroke-[2.5]' : 'stroke-[1.8]'} />
-              <span className="text-[10px] mt-0.5 tracking-tight">{tab.label}</span>
+              {tab.id === 'akun' && currentUser ? (
+                <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold ${
+                  isActive ? 'bg-[#0F4C5C] text-white' : 'bg-slate-200 text-slate-700'
+                }`}>
+                  {currentUser.initials}
+                </div>
+              ) : (
+                <Icon size={20} className={isActive ? 'stroke-[2.5]' : 'stroke-[1.8]'} />
+              )}
+              <span className="text-[10px] mt-0.5 tracking-tight truncate max-w-[54px]">{tab.label}</span>
             </button>
           );
         })}

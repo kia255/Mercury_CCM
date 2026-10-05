@@ -128,3 +128,16 @@ export interface ManufacturerObjection {
   status: 'menunggu_peninjauan' | 'diterima' | 'ditolak';
   submittedAt: string;
 }
+
+export interface UserAccount {
+  id: string;
+  name: string;
+  email: string;
+  password?: string;
+  city?: string;
+  initials: string;
+  memberId: string;
+  joinDate: string;
+  testsCount: number;
+  bio?: string;
+}
