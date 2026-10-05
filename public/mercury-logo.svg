@@ -1,0 +1,42 @@
+<svg viewBox="0 0 1060 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath id="mercury-droplet-clip">
+      <path d="M 250 82 C 250 82 155 235 155 315 C 155 372 198 416 250 416 C 302 416 345 372 345 315 C 345 235 250 82 250 82 Z" />
+    </clipPath>
+  </defs>
+
+  <!-- Left: Reticle & Reagent Droplet Mark -->
+  <g transform="translate(10, 0)">
+    <!-- Viewfinder Corner Brackets -->
+    <g stroke="#1C353D" stroke-width="18" stroke-linecap="square">
+      <path d="M 72 170 L 72 74 L 168 74" fill="none" />
+      <path d="M 332 74 L 428 74 L 428 170" fill="none" />
+      <path d="M 72 330 L 72 426 L 168 426" fill="none" />
+      <path d="M 332 426 L 428 426 L 428 330" fill="none" />
+    </g>
+
+    <!-- Crosshairs -->
+    <g stroke="#1C353D" stroke-width="18" stroke-linecap="square">
+      <line x1="42" y1="250" x2="135" y2="250" />
+      <line x1="365" y1="250" x2="458" y2="250" />
+      <line x1="250" y1="42" x2="250" y2="135" />
+      <line x1="250" y1="365" x2="250" y2="458" />
+    </g>
+
+    <!-- Center Target Circle -->
+    <circle cx="250" cy="250" r="146" stroke="#1C353D" stroke-width="15" fill="none" />
+
+    <!-- Droplet -->
+    <g clip-path="url(#mercury-droplet-clip)">
+      <rect x="140" y="70" width="220" height="360" fill="#1C353D" />
+      <!-- Reagent fluid in Soft Coral -->
+      <path d="M 140 292 Q 200 270, 250 286 T 360 278 L 360 430 L 140 430 Z" fill="#E07D74" />
+    </g>
+  </g>
+
+  <!-- Right: Mer / cury Typography -->
+  <g fill="#1C353D" font-family="'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif" font-weight="800" letter-spacing="-0.03em">
+    <text x="525" y="235" font-size="248">Mer</text>
+    <text x="515" y="442" font-size="248">cury</text>
+  </g>
+</svg>
