@@ -91,7 +91,7 @@ export const ShopView: React.FC<ShopViewProps> = ({
                   {HG_TEST_KIT.name}
                 </h1>
                 <p className="text-xs sm:text-sm font-semibold text-teal-800/80 mt-0.5">
-                  Paket Lengkap Pemeriksaan Rangkaian Skincare
+                  Kit Skrining Mandiri Merkuri (Isi 5 Strip)
                 </p>
               </div>
 

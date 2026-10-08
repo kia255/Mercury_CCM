@@ -69,7 +69,14 @@ export const ChatbotWidget: React.FC<ChatbotWidgetProps> = ({
         // Pastikan nama lama tidak terbawa dari session lama
         if (Array.isArray(parsed) && parsed.length > 0) {
           const sanitized = parsed.map((m: ChatMessage) => {
-            if (m.id === 'msg-welcome' || m.text.includes('Merqi')) {
+            if (
+              m.id === 'msg-welcome' || 
+              m.text.includes('Merqi') || 
+              m.text.includes('Starter') || 
+              m.text.includes('Routine') || 
+              m.text.includes('Community') || 
+              m.text.includes('simulasi')
+            ) {
               return {
                 ...m,
                 text: WELCOME_TEXT
@@ -219,7 +226,11 @@ export const ChatbotWidget: React.FC<ChatbotWidgetProps> = ({
       let fallbackText = '';
       const lower = query.toLowerCase();
 
-      if (lower.includes('cara pakai') || lower.includes('langkah') || lower.includes('cara guna') || lower.includes('cara uji') || lower.includes('cara tes')) {
+      if (lower.includes('banyak produk') || lower.includes('berapa produk') || lower.includes('ada produk apa') || lower.includes('produk apa') || lower.includes('apa saja produk') || lower.includes('jual apa') || lower.includes('katalog') || lower.includes('paket lain') || lower.includes('daftar produk')) {
+        fallbackText = 'Di web MERCURY kami hanya punya 1 produk saja, yaitu **Hg Test Kit** seharga **Rp 49.000**. MERCURY tidak menjual skincare ataupun paket produk lainnya. Kit ini berisi 5 strip kertas uji merkuri, 2 kartu referensi warna, 5 alat pengambil sampel sekali pakai, serta panduan bergambar untuk skrining awal mandiri.';
+      } else if (lower.includes('isi kit') || lower.includes('hg test kit') || lower.includes('beli') || lower.includes('harga') || lower.includes('produk')) {
+        fallbackText = 'MERCURY hanya memiliki 1 produk fisik saja, yaitu **Hg Test Kit** seharga **Rp 49.000**. Kit ini berisi 5 strip kertas uji merkuri, 2 kartu referensi warna, 5 alat ambil sampel sekali pakai, panduan bergambar dan skala warna, serta kode batch MRC-2026-A05 dan QR. Kami tidak menjual produk kosmetik atau pilihan produk lainnya.';
+      } else if (lower.includes('cara pakai') || lower.includes('langkah') || lower.includes('cara guna') || lower.includes('cara uji') || lower.includes('cara tes')) {
         fallbackText = 'Untuk pakai Hg Test Kit, ambil sedikit sampel krim pakai alat sekali pakai, lalu teteskan di zona tetes pada kertas uji. Tunggu reaksinya sesuai panduan bergambar. Setelah itu, foto bersama kartu referensi warna di pencahayaan cukup tanpa flash dan latar putih lewat menu Scan. Ingat ya, hasil ini adalah skrining awal, bukan pengganti uji laboratorium!';
       } else if (lower.includes('arti') && lower.includes('terindikasi')) {
         fallbackText = 'Status "Terindikasi" berarti reaksi warna pada kertas uji menunjukkan kemungkinan adanya kandungan merkuri pada sampel skrining awal. Ini bukan konfirmasi laboratorium definitif. Jika hasil terindikasi, sebaiknya segera hentikan pemakaian produk, lakukan konfirmasi ke laboratorium terakreditasi, dan laporkan ke BPOM.';
@@ -229,15 +240,12 @@ export const ChatbotWidget: React.FC<ChatbotWidgetProps> = ({
         fallbackText = 'Jika hasil skrining awal terindikasi merkuri, pertama segera hentikan pemakaian produk. Kedua, lakukan konfirmasi ke laboratorium terakreditasi untuk memastikan kandungannya. Terakhir, laporkan temuan tersebut ke BPOM. Jika kulitmu terasa sakit atau iritasi, segera konsultasikan ke dokter atau fasilitas kesehatan ya.';
       } else if (lower.includes('akurasi') || lower.includes('sensitivitas') || lower.includes('berapa persen')) {
         fallbackText = 'Hg Test Kit saat ini masih tahap prototipe dan validasi laboratorium sedang direncanakan, jadi kami tidak menyebutkan angka akurasi atau sensitivitas tertentu. Hasil uji berfungsi sebagai skrining awal mandiri bagi masyarakat.';
-      } else if (lower.includes('isi kit') || lower.includes('hg test kit') || lower.includes('beli') || lower.includes('harga')) {
-        fallbackReplyText:
-        fallbackText = 'Hg Test Kit berisi 5 strip kertas uji merkuri, 2 kartu referensi warna, 5 alat ambil sampel sekali pakai, panduan bergambar dan skala warna, serta kode batch MRC-2026-A05 dan QR. Kit ini bisa mengecek satu rangkaian skincare-mu (krim siang, krim malam, toner, serum, sabun). Harga di web merupakan harga simulasi untuk prototipe.';
       } else if (lower.includes('bahaya') || lower.includes('efek') || lower.includes('racun')) {
         fallbackText = 'Merkuri adalah logam berat berbahaya yang dilarang dalam kosmetik karena bisa merusak lapisan pelindung kulit dan memicu flek hitam yang sulit hilang. Jika terserap ke tubuh, merkuri berisiko merusak ginjal serta sistem saraf. Pastikan selalu mengecek izin resmi di cekbpom.pom.go.id ya!';
       } else if (lower.includes('halo') || lower.includes('hai') || lower.includes('mercy')) {
         fallbackText = 'Hai, aku Mercy, asisten MERCURY! Aku bisa bantu soal cara pakai Hg Test Kit, arti hasil tes, dan cara baca Hasil Tes dari komunitas. Mau tanya apa?';
       } else {
-        fallbackText = 'Hai! Mercy fokus membantu skrining awal merkuri dan fitur di MERCURY. Kamu bisa tanya cara pakai Hg Test Kit, arti status hasil seperti Terindikasi, atau cara baca Hasil Tes komunitas. Ada yang ingin kamu tanyakan seputar skrining merkuri?';
+        fallbackText = 'Hai! Mercy siap membantu seputar skrining awal merkuri dan fitur di MERCURY. Perlu diketahui di MERCURY kami hanya memiliki 1 produk saja, yaitu Hg Test Kit seharga Rp 49.000. Ada yang ingin kamu tanyakan mengenai cara pakai atau hasil tes?';
       }
 
       const action = detectActionLink(fallbackText);
