@@ -1,22 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { 
-  MessageSquare, 
   X, 
   Send, 
-  Sparkles, 
   Trash2, 
-  Minimize2, 
-  ExternalLink, 
   ChevronRight,
-  ShieldCheck,
-  FlaskConical,
-  Database,
-  ShoppingBag,
-  HelpCircle,
   Copy,
   Check
 } from 'lucide-react';
-import { MercuryMascot } from '../illustrations/MercuryMascot';
+import { MercuryDropletMark } from '../common/MercuryLogo';
 import { BPOM_OFFICIAL_URL } from '../../config/constants';
 
 export interface ChatMessage {
@@ -37,12 +28,26 @@ interface ChatbotWidgetProps {
   onCloseExternal?: () => void;
 }
 
-const DEFAULT_CHIPS = [
-  { label: '🔬 Cara pakai kit uji', prompt: 'Bagaimana langkah-langkah menggunakan kit kertas uji MERCURY?' },
-  { label: '⚠️ Bahaya merkuri', prompt: 'Apa saja bahaya merkuri pada kosmetik untuk kulit dan kesehatan?' },
-  { label: '🔎 Ciri krim merkuri', prompt: 'Apa saja ciri-ciri fisik krim yang dicurigai mengandung merkuri?' },
-  { label: '🏛️ Cara cek BPOM', prompt: 'Bagaimana cara mengecek keaslian nomor izin BPOM kosmetik?' },
-  { label: '🛒 Beli kit strip uji', prompt: 'Bagaimana cara membeli paket kit uji resmi MERCURY?' }
+const WELCOME_TEXT = "Hai, aku Mercy, asisten MERCURY! Aku bisa bantu soal cara pakai Hg Test Kit, arti hasil tes, dan cara baca Hasil Tes dari komunitas. Mau tanya apa?";
+
+// 4 Tombol Pertanyaan Cepat Sesuai Permintaan
+const QUICK_QUESTIONS = [
+  { 
+    label: 'Cara pakai kit', 
+    prompt: 'Bagaimana cara pakai Hg Test Kit?' 
+  },
+  { 
+    label: 'Arti hasil Terindikasi', 
+    prompt: 'Apa arti hasil status Terindikasi?' 
+  },
+  { 
+    label: 'Boleh pakai kertas dari tempat lain?', 
+    prompt: 'Boleh pakai kertas dari tempat lain?' 
+  },
+  { 
+    label: 'Kalau terindikasi, harus apa?', 
+    prompt: 'Kalau hasil tes terindikasi, harus apa?' 
+  }
 ];
 
 export const ChatbotWidget: React.FC<ChatbotWidgetProps> = ({ 
@@ -60,7 +65,20 @@ export const ChatbotWidget: React.FC<ChatbotWidgetProps> = ({
     try {
       const saved = localStorage.getItem('mercury_chat_history');
       if (saved) {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        // Pastikan nama lama tidak terbawa dari session lama
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const sanitized = parsed.map((m: ChatMessage) => {
+            if (m.id === 'msg-welcome' || m.text.includes('Merqi')) {
+              return {
+                ...m,
+                text: WELCOME_TEXT
+              };
+            }
+            return m;
+          });
+          return sanitized;
+        }
       }
     } catch (e) {
       console.warn('Gagal memuat chat history:', e);
@@ -70,7 +88,7 @@ export const ChatbotWidget: React.FC<ChatbotWidgetProps> = ({
       {
         id: 'msg-welcome',
         sender: 'bot',
-        text: 'Halo! Saya **Merqi**, asisten virtual cerdas MERCURY. 👋🔬\n\nSaya siap membantu Anda memahami **keamanan kosmetik**, **cara pakai kit uji kertas**, bahaya merkuri, hingga verifikasi izin BPOM.\n\nAda yang ingin Anda tanyakan seputar kosmetik hari ini?',
+        text: WELCOME_TEXT,
         timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
       }
     ];
@@ -123,7 +141,7 @@ export const ChatbotWidget: React.FC<ChatbotWidgetProps> = ({
     const welcomeMsg: ChatMessage = {
       id: `msg-${Date.now()}`,
       sender: 'bot',
-      text: 'Riwayat percakapan telah dibersihkan. Saya siap membantu Anda kembali! Silakan ketik pertanyaan atau pilih topik di bawah.',
+      text: WELCOME_TEXT,
       timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
     };
     setMessages([welcomeMsg]);
@@ -137,14 +155,14 @@ export const ChatbotWidget: React.FC<ChatbotWidgetProps> = ({
 
   const detectActionLink = (text: string): { type: 'navigate'; tab: string; label: string } | undefined => {
     const lower = text.toLowerCase();
-    if (lower.includes('scan') || lower.includes('kamera') || lower.includes('kertas uji')) {
-      return { type: 'navigate', tab: 'scan', label: 'Buka Menu Scan Kertas' };
+    if (lower.includes('scan') || lower.includes('kamera') || lower.includes('menu scan')) {
+      return { type: 'navigate', tab: 'scan', label: 'Buka Menu Scan' };
     }
-    if (lower.includes('basis data') || lower.includes('database') || lower.includes('direktori')) {
-      return { type: 'navigate', tab: 'database', label: 'Jelajahi Basis Data' };
+    if (lower.includes('hasil tes') || lower.includes('komunitas') || lower.includes('basis data')) {
+      return { type: 'navigate', tab: 'database', label: 'Lihat Hasil Tes Komunitas' };
     }
-    if (lower.includes('toko') || lower.includes('starter kit') || lower.includes('beli kit')) {
-      return { type: 'navigate', tab: 'shop', label: 'Buka Toko Kit Uji' };
+    if (lower.includes('toko') || lower.includes('hg test kit') || lower.includes('beli')) {
+      return { type: 'navigate', tab: 'shop', label: 'Lihat Hg Test Kit' };
     }
     return undefined;
   };
@@ -166,7 +184,7 @@ export const ChatbotWidget: React.FC<ChatbotWidgetProps> = ({
     setIsLoading(true);
 
     try {
-      // Call server-side API endpoint
+      // Panggil server-side API endpoint
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -181,7 +199,7 @@ export const ChatbotWidget: React.FC<ChatbotWidgetProps> = ({
       }
 
       const data = await response.json();
-      const replyText = data.reply || data.fallbackReply || 'Maaf, belum ada respons yang tersedia.';
+      const replyText = data.reply || data.fallbackReply || 'Hai! Ada kendala jaringan sebentar, silakan tanyakan lagi ke Mercy ya.';
 
       const action = detectActionLink(replyText);
 
@@ -195,24 +213,31 @@ export const ChatbotWidget: React.FC<ChatbotWidgetProps> = ({
 
       setMessages(prev => [...prev, botMessage]);
     } catch (err) {
-      console.warn('Network or API issue, using local knowledge base fallback:', err);
+      console.warn('Network issue or offline mode, using Mercy smart response fallback:', err);
       
-      // Smart instant fallback response
+      // Fallback response strictly adhering to Mercy rules
       let fallbackText = '';
       const lower = query.toLowerCase();
 
-      if (lower.includes('cara pakai') || lower.includes('cara guna') || lower.includes('cara test') || lower.includes('cara tes')) {
-        fallbackText = `Berikut panduan pengujian menggunakan Kit Uji MERCURY:\n\n1. **Letakkan Kertas**: Taruh strip kertas reagen MERCURY di tempat datar.\n2. **Oleskan Sampel**: Ambil krim seukuran biji jagung, oles merata pada lingkaran reagen di bagian tengah.\n3. **Tunggu Reaksi**: Diamkan 1-2 menit hingga reagen bereaksi dengan kemungkinan ion merkuri (Hg²⁺).\n4. **Scan Kamera**: Masuk ke menu **Scan Kertas Uji** di aplikasi, arahkan kamera tegak lurus dengan 4 target kalibrasi warna.\n5. **Hasil Otomatis**: Sistem menghitung pergeseran warna (ΔE) dan perkiraan rentang kadar merkuri (ppm).`;
-      } else if (lower.includes('bahaya') || lower.includes('efek') || lower.includes('racun') || lower.includes('rusak')) {
-        fallbackText = `Merkuri (Hg) adalah logam berat berbahaya yang dilarang dalam kosmetik:\n\n• **Pada Kulit**: Mengikis skin barrier, sensasi perih terbakar, iritasi, dan menyebabkan *ochronosis* (flek hitam permanen).\n• **Pada Ginjal & Saraf**: Merkuri meresap ke aliran darah, merusak filter ginjal serta menyebabkan gangguan saraf (tremor, insomnia, kecemasan).\n• **Pada Janin**: Menembus plasenta dan memicu kelainan bawaan pada otak janin.\n\nBatas aman BPOM & WHO adalah di bawah 1 ppm (tidak boleh sengaja ditambahkan).`;
-      } else if (lower.includes('ciri') || lower.includes('tanda') || lower.includes('krim')) {
-        fallbackText = `Ciri-ciri kosmetik yang patut dicurigai mengandung merkuri:\n\n1. **Warna Mengkilap**: Berwarna putih mutiara berkilau (*pearlescent*) atau kuning terang mencolok.\n2. **Tekstur Lengket**: Sulit membaur di kulit atau memisah antara minyak dan padatan.\n3. **Bau Logam**: Bau menyengat yang sering ditutupi parfum tebal.\n4. **Hasil Instan**: Mengklaim memutihkan wajah secara instan dalam 3-7 hari.\n5. **Tanpa Izin BPOM**: Tidak memiliki nomor notifikasi resmi yang terdaftar di cekbpom.pom.go.id.`;
-      } else if (lower.includes('bpom') || lower.includes('izin') || lower.includes('legal')) {
-        fallbackText = `Cara memastikan izin edar kosmetik:\n\n1. Cek nomor **Notifikasi BPOM** pada kemasan (contoh: **NA18230101234**).\n2. Kunjungi situs resmi **[cekbpom.pom.go.id](https://cekbpom.pom.go.id)** atau buka aplikasi **BPOM Mobile**.\n3. Masukkan nomor izin atau nama merek untuk memastikan statusnya masih aktif.\n4. Anda juga bisa melihat hasil uji komunitas di menu **Basis Data**.`;
-      } else if (lower.includes('beli') || lower.includes('order') || lower.includes('harga') || lower.includes('kit')) {
-        fallbackText = `Kit strip uji resmi MERCURY dapat dipesan di menu **Toko Kit Uji**:\n\n• **Starter Kit Konsumen** (5 strip uji + kartu kalibrasi)\n• **Family Safety Pack** (15 strip uji)\n• **Lab Bulk Pack** (50 strip uji)\n\nSemua kit dilengkapi formula reagen terstandarisasi untuk deteksi cepat di rumah.`;
+      if (lower.includes('cara pakai') || lower.includes('langkah') || lower.includes('cara guna') || lower.includes('cara uji') || lower.includes('cara tes')) {
+        fallbackText = 'Untuk pakai Hg Test Kit, ambil sedikit sampel krim pakai alat sekali pakai, lalu teteskan di zona tetes pada kertas uji. Tunggu reaksinya sesuai panduan bergambar. Setelah itu, foto bersama kartu referensi warna di pencahayaan cukup tanpa flash dan latar putih lewat menu Scan. Ingat ya, hasil ini adalah skrining awal, bukan pengganti uji laboratorium!';
+      } else if (lower.includes('arti') && lower.includes('terindikasi')) {
+        fallbackText = 'Status "Terindikasi" berarti reaksi warna pada kertas uji menunjukkan kemungkinan adanya kandungan merkuri pada sampel skrining awal. Ini bukan konfirmasi laboratorium definitif. Jika hasil terindikasi, sebaiknya segera hentikan pemakaian produk, lakukan konfirmasi ke laboratorium terakreditasi, dan laporkan ke BPOM.';
+      } else if (lower.includes('tempat lain') || lower.includes('kertas lain') || (lower.includes('boleh') && lower.includes('kertas'))) {
+        fallbackText = 'Tentu boleh! Scan dan unggah hasil di MERCURY gratis untuk semua orang, dan kamu tidak wajib membeli kit di sini. Kalau kamu memakai kertas dari sumber lain, hasilnya tetap bisa diunggah namun akan diberi catatan khusus dan tingkat kepercayaan data yang lebih rendah.';
+      } else if (lower.includes('harus apa') || (lower.includes('kalau') && lower.includes('terindikasi')) || (lower.includes('jika') && lower.includes('terindikasi'))) {
+        fallbackText = 'Jika hasil skrining awal terindikasi merkuri, pertama segera hentikan pemakaian produk. Kedua, lakukan konfirmasi ke laboratorium terakreditasi untuk memastikan kandungannya. Terakhir, laporkan temuan tersebut ke BPOM. Jika kulitmu terasa sakit atau iritasi, segera konsultasikan ke dokter atau fasilitas kesehatan ya.';
+      } else if (lower.includes('akurasi') || lower.includes('sensitivitas') || lower.includes('berapa persen')) {
+        fallbackText = 'Hg Test Kit saat ini masih tahap prototipe dan validasi laboratorium sedang direncanakan, jadi kami tidak menyebutkan angka akurasi atau sensitivitas tertentu. Hasil uji berfungsi sebagai skrining awal mandiri bagi masyarakat.';
+      } else if (lower.includes('isi kit') || lower.includes('hg test kit') || lower.includes('beli') || lower.includes('harga')) {
+        fallbackReplyText:
+        fallbackText = 'Hg Test Kit berisi 5 strip kertas uji merkuri, 2 kartu referensi warna, 5 alat ambil sampel sekali pakai, panduan bergambar dan skala warna, serta kode batch MRC-2026-A05 dan QR. Kit ini bisa mengecek satu rangkaian skincare-mu (krim siang, krim malam, toner, serum, sabun). Harga di web merupakan harga simulasi untuk prototipe.';
+      } else if (lower.includes('bahaya') || lower.includes('efek') || lower.includes('racun')) {
+        fallbackText = 'Merkuri adalah logam berat berbahaya yang dilarang dalam kosmetik karena bisa merusak lapisan pelindung kulit dan memicu flek hitam yang sulit hilang. Jika terserap ke tubuh, merkuri berisiko merusak ginjal serta sistem saraf. Pastikan selalu mengecek izin resmi di cekbpom.pom.go.id ya!';
+      } else if (lower.includes('halo') || lower.includes('hai') || lower.includes('mercy')) {
+        fallbackText = 'Hai, aku Mercy, asisten MERCURY! Aku bisa bantu soal cara pakai Hg Test Kit, arti hasil tes, dan cara baca Hasil Tes dari komunitas. Mau tanya apa?';
       } else {
-        fallbackText = `Terima kasih atas pertanyaannya! Sebagai asisten skrining kosmetik MERCURY, saya dapat membantu Anda:\n\n1. Memandu cara menguji krim di menu **Scan Kertas Uji**.\n2. Menjelaskan bahaya merkuri dan ciri-ciri kosmetik ilegal.\n3. Memberikan panduan cek keaslian izin BPOM di **cekbpom.pom.go.id**.\n\nSilakan pilih topik atau tanyakan hal spesifik lainnya.`;
+        fallbackText = 'Hai! Mercy fokus membantu skrining awal merkuri dan fitur di MERCURY. Kamu bisa tanya cara pakai Hg Test Kit, arti status hasil seperti Terindikasi, atau cara baca Hasil Tes komunitas. Ada yang ingin kamu tanyakan seputar skrining merkuri?';
       }
 
       const action = detectActionLink(fallbackText);
@@ -277,23 +302,23 @@ export const ChatbotWidget: React.FC<ChatbotWidgetProps> = ({
             {!hasInteracted && (
               <div className="hidden sm:flex absolute bottom-full right-0 mb-3 items-center gap-2 px-3.5 py-2 rounded-2xl bg-slate-900 text-white text-xs font-semibold shadow-xl border border-slate-700 whitespace-nowrap animate-bounce">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Tanya Merqi seputar kosmetik & merkuri</span>
+                <span>Tanya Mercy seputar Hg Test Kit & hasil skrining</span>
               </div>
             )}
 
+            {/* Tombol Melayang: "Tanya Mercy" dengan ikon tetesan dari logo MERCURY */}
             <button
               onClick={handleToggle}
-              className="flex items-center gap-2.5 px-4 py-3.5 rounded-full bg-[#0F4C5C] hover:bg-[#166479] text-white shadow-xl shadow-[#0F4C5C]/30 border-2 border-white/80 transition-all hover:scale-105 active:scale-95 cursor-pointer"
-              aria-label="Buka Chatbot Asisten MERCURY"
+              className="flex items-center gap-2.5 px-4 py-3 rounded-full bg-[#0F4C5C] hover:bg-[#166479] text-white shadow-xl shadow-[#0F4C5C]/35 border-2 border-white/90 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+              aria-label="Tanya Mercy"
             >
-              <div className="relative">
-                <MercuryMascot mood="wave" size={28} />
-                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 border-2 border-white rounded-full" />
+              <div className="relative flex items-center justify-center">
+                <MercuryDropletMark size={20} variant="light" />
+                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 border-2 border-[#0F4C5C] rounded-full" />
               </div>
-              <div className="text-left hidden sm:block">
-                <p className="text-xs font-black tracking-tight leading-none">Chat Asisten</p>
-                <p className="text-[10px] text-teal-200 font-medium">Tanya Merqi</p>
-              </div>
+              <span className="text-xs sm:text-sm font-extrabold tracking-tight">
+                Tanya Mercy
+              </span>
             </button>
           </div>
         )}
@@ -306,15 +331,15 @@ export const ChatbotWidget: React.FC<ChatbotWidgetProps> = ({
           {/* Header */}
           <div className="px-5 py-4 bg-gradient-to-r from-[#0F4C5C] to-[#166479] text-white flex items-center justify-between shadow-md shrink-0">
             <div className="flex items-center gap-3">
-              <div className="relative p-1 bg-white/10 rounded-2xl border border-white/20 backdrop-blur-sm">
-                <MercuryMascot mood="wave" size={34} />
+              <div className="relative p-2 bg-white/10 rounded-2xl border border-white/20 backdrop-blur-sm flex items-center justify-center">
+                <MercuryDropletMark size={22} variant="light" />
                 <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-400 border-2 border-[#0F4C5C] rounded-full" />
               </div>
               <div>
                 <div className="flex items-center gap-1.5">
-                  <h3 className="font-black text-sm text-white tracking-tight">Merqi</h3>
+                  <h3 className="font-black text-sm text-white tracking-tight">Mercy</h3>
                   <span className="text-[10px] font-extrabold uppercase bg-white/20 px-2 py-0.5 rounded-full text-teal-100">
-                    AI Asisten
+                    Asisten MERCURY
                   </span>
                 </div>
                 <p className="text-[11px] text-teal-100/90 font-medium flex items-center gap-1">
@@ -334,7 +359,7 @@ export const ChatbotWidget: React.FC<ChatbotWidgetProps> = ({
               </button>
               <button
                 onClick={handleToggle}
-                title="Tutup chat"
+                title="Tutup jendela chat"
                 className="p-2 rounded-xl text-teal-100 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
               >
                 <X size={18} />
@@ -354,7 +379,7 @@ export const ChatbotWidget: React.FC<ChatbotWidgetProps> = ({
                 >
                   {isBot && (
                     <div className="shrink-0 mt-0.5 p-1 rounded-xl bg-teal-50 border border-teal-100 shadow-2xs">
-                      <MercuryMascot mood="celebrate" size={24} />
+                      <MercuryDropletMark size={16} variant="colored" />
                     </div>
                   )}
 
@@ -412,13 +437,13 @@ export const ChatbotWidget: React.FC<ChatbotWidgetProps> = ({
             {isLoading && (
               <div className="flex items-start gap-2.5">
                 <div className="shrink-0 p-1 rounded-xl bg-teal-50 border border-teal-100 shadow-2xs">
-                  <MercuryMascot mood="curious" size={24} />
+                  <MercuryDropletMark size={16} variant="colored" />
                 </div>
                 <div className="px-4 py-3 rounded-2xl bg-white border border-slate-200 shadow-xs rounded-tl-sm flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-[#0F4C5C] animate-bounce" />
                   <span className="w-2 h-2 rounded-full bg-[#0F4C5C] animate-bounce [animation-delay:0.2s]" />
                   <span className="w-2 h-2 rounded-full bg-[#0F4C5C] animate-bounce [animation-delay:0.4s]" />
-                  <span className="text-[11px] text-slate-500 font-medium pl-1">Merqi sedang berpikir...</span>
+                  <span className="text-[11px] text-slate-500 font-medium pl-1">Mercy sedang mengetik...</span>
                 </div>
               </div>
             )}
@@ -426,14 +451,14 @@ export const ChatbotWidget: React.FC<ChatbotWidgetProps> = ({
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Quick Question Chips */}
+          {/* 4 Tombol Pertanyaan Cepat Sesuai Permintaan */}
           <div className="p-2.5 bg-white border-t border-slate-100 flex items-center gap-1.5 overflow-x-auto no-scrollbar shrink-0">
-            {DEFAULT_CHIPS.map((chip, idx) => (
+            {QUICK_QUESTIONS.map((chip, idx) => (
               <button
                 key={idx}
                 onClick={() => handleSendMessage(chip.prompt)}
                 disabled={isLoading}
-                className="shrink-0 px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-teal-50 hover:text-[#0F4C5C] text-slate-600 text-[11px] font-bold transition-all border border-slate-200/60 cursor-pointer disabled:opacity-50"
+                className="shrink-0 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-teal-50 hover:text-[#0F4C5C] text-slate-700 text-[11px] font-bold transition-all border border-slate-200/80 cursor-pointer disabled:opacity-50 active:scale-95 whitespace-nowrap"
               >
                 {chip.label}
               </button>
@@ -450,7 +475,7 @@ export const ChatbotWidget: React.FC<ChatbotWidgetProps> = ({
               type="text"
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
-              placeholder="Tanyakan apa saja seputar merkuri..."
+              placeholder="Tanya Mercy seputar skrining merkuri..."
               disabled={isLoading}
               className="flex-1 px-4 py-2.5 rounded-2xl bg-slate-100/90 focus:bg-white text-xs sm:text-sm font-medium text-slate-800 placeholder-slate-400 border border-slate-200 focus:border-[#0F4C5C] focus:ring-2 focus:ring-[#0F4C5C]/15 outline-none transition-all disabled:opacity-60"
             />
@@ -466,15 +491,7 @@ export const ChatbotWidget: React.FC<ChatbotWidgetProps> = ({
 
           {/* Safety footer disclaimer */}
           <div className="px-4 py-1.5 bg-slate-100/70 border-t border-slate-200/60 text-center text-[10px] text-slate-500 font-medium">
-            <span>Didukung AI MERCURY. Selalu verifikasi izin resmi di </span>
-            <a 
-              href={BPOM_OFFICIAL_URL} 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="text-[#0F4C5C] font-bold hover:underline"
-            >
-              cekbpom.pom.go.id
-            </a>
+            <span>Hasil MERCURY adalah skrining awal, bukan pengganti uji laboratorium.</span>
           </div>
 
         </div>

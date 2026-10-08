@@ -119,10 +119,10 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 onClick={onOpenChat}
                 className="hidden lg:inline-flex items-center gap-1.5 text-xs text-[#0F4C5C] hover:bg-teal-50 px-3 py-1.5 rounded-xl border border-teal-200/80 font-bold transition-all cursor-pointer"
-                title="Tanya Asisten AI Merqi"
+                title="Tanya Mercy"
               >
                 <Sparkles size={14} className="text-[#E8837A]" />
-                <span>Asisten AI</span>
+                <span>Tanya Mercy</span>
               </button>
             )}
 
@@ -324,7 +324,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               <div className="flex items-center gap-2.5">
                 <Sparkles size={16} className="text-[#E8837A]" />
-                <span>Tanya Asisten AI Merqi</span>
+                <span>Tanya Mercy</span>
               </div>
               <span className="text-[10px] bg-white px-2 py-0.5 rounded-full font-extrabold text-[#0F4C5C]">
                 Chatbot

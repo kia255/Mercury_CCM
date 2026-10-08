@@ -199,3 +199,53 @@ export const MercuryMarkSvg: React.FC<MercuryMarkSvgProps> = ({
     </g>
   );
 };
+
+export interface MercuryDropletMarkProps {
+  size?: number;
+  className?: string;
+  variant?: 'light' | 'colored';
+}
+
+/**
+ * Tetesan dari logo MERCURY (droplet with colorimetric reagent meniscus)
+ */
+export const MercuryDropletMark: React.FC<MercuryDropletMarkProps> = ({
+  size = 24,
+  className = '',
+  variant = 'light'
+}) => {
+  const upperFill = variant === 'light' ? '#FFFFFF' : '#0F4C5C';
+  const coralFill = '#E07D74';
+  const strokeColor = variant === 'light' ? '#FFFFFF' : '#0F4C5C';
+
+  return (
+    <svg
+      viewBox="140 70 220 360"
+      width={size}
+      height={Math.round(size * (360 / 220))}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={`inline-block shrink-0 ${className}`}
+      aria-label="Tetesan Logo MERCURY"
+    >
+      <defs>
+        <clipPath id="mercury-droplet-mark-clip">
+          <path d="M 250 82 C 250 82 155 235 155 315 C 155 372 198 416 250 416 C 302 416 345 372 345 315 C 345 235 250 82 250 82 Z" />
+        </clipPath>
+      </defs>
+      <g clipPath="url(#mercury-droplet-mark-clip)">
+        <rect x="140" y="70" width="220" height="360" fill={upperFill} />
+        <path
+          d="M 140 292 Q 200 270, 250 286 T 360 278 L 360 430 L 140 430 Z"
+          fill={coralFill}
+        />
+      </g>
+      <path
+        d="M 250 82 C 250 82 155 235 155 315 C 155 372 198 416 250 416 C 302 416 345 372 345 315 C 345 235 250 82 250 82 Z"
+        stroke={strokeColor}
+        strokeWidth="10"
+        fill="none"
+      />
+    </svg>
+  );
+};

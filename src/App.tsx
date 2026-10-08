@@ -215,17 +215,17 @@ export default function App() {
   };
 
   // Cart operations
-  const handleAddToCart = (pkg: KitPackage) => {
+  const handleAddToCart = (pkg: KitPackage, quantity: number = 1) => {
     setCartItems(prev => {
       const existing = prev.find(item => item.packageId === pkg.id);
       if (existing) {
         return prev.map(item => 
           item.packageId === pkg.id 
-            ? { ...item, quantity: item.quantity + 1 }
+            ? { ...item, quantity: item.quantity + quantity }
             : item
         );
       }
-      return [...prev, { packageId: pkg.id, quantity: 1 }];
+      return [...prev, { packageId: pkg.id, quantity }];
     });
     setIsCartOpen(true);
   };
@@ -447,7 +447,7 @@ export default function App() {
         initialMode={authModalMode}
       />
 
-      {/* AI Assistant Chatbot (Merqi) */}
+      {/* Asisten Chatbot MERCURY (Mercy) */}
       <ChatbotWidget
         onNavigateTab={(tab) => {
           setCurrentTab(tab);

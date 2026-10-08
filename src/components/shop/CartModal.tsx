@@ -97,9 +97,9 @@ export const CartModal: React.FC<CartModalProps> = ({
           <div className="flex items-center gap-2">
             <ShoppingBag size={18} className="text-[#0F4C5C]" />
             <h3 className="font-bold text-base text-[#1E293B]">
-              {step === 'cart' && 'Keranjang Belanja Kit MERCURY'}
-              {step === 'checkout' && 'Formulir Pemesanan & Pengiriman'}
-              {step === 'success' && 'Pesanan Berhasil Dibuat'}
+              {step === 'cart' && 'Keranjang Belanja Hg Test Kit'}
+              {step === 'checkout' && 'Formulir Pemesanan & Pengiriman (Simulasi)'}
+              {step === 'success' && 'Pesanan Berhasil Dibuat (Simulasi)'}
             </h3>
           </div>
           <button onClick={onClose} className="p-1 rounded text-slate-400 hover:text-slate-600">
@@ -120,7 +120,7 @@ export const CartModal: React.FC<CartModalProps> = ({
                   onClick={onClose}
                   className="px-4 py-2 text-xs font-semibold bg-[#0F4C5C] text-white rounded-xl hover:bg-[#166479]"
                 >
-                  Pilih Paket Kertas Uji
+                  Lihat Hg Test Kit
                 </button>
               </div>
             ) : (
@@ -134,8 +134,8 @@ export const CartModal: React.FC<CartModalProps> = ({
                         </div>
                         <div>
                           <h4 className="font-bold text-xs text-slate-800">{item.package.name}</h4>
-                          <div className="text-[11px] text-slate-500">
-                            Rp{item.package.price.toLocaleString('id-ID')} · {item.package.stripCount}x Kertas Uji
+                          <div className="text-[11px] text-slate-500 font-medium">
+                            Rp 49.000 · Isi 5 strip
                           </div>
                           <div className="text-[10px] font-mono text-[#0F4C5C]">
                             Batch: {item.package.batchCode}

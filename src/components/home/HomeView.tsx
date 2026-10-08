@@ -63,8 +63,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
           
           {/* Logo Brand Showcase & Friendly Greeting */}
           <div className="flex flex-col items-center justify-center gap-3">
-            <div className="p-3 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-md inline-flex items-center justify-center hover:scale-105 transition-transform duration-300">
-              <MercuryLogo variant="full" colorMode="dark" size={48} />
+            <div className="px-5 py-3.5 bg-white rounded-2xl border border-white shadow-xl inline-flex items-center justify-center hover:scale-105 transition-transform duration-300">
+              <MercuryLogo variant="full" size={48} />
             </div>
 
             <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-xs font-bold text-teal-100 animate-fadeIn">

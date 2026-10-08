@@ -30,46 +30,27 @@ async function startServer() {
     });
   }
 
-  // Knowledge System Instruction for MERCURY Chatbot
-  const SYSTEM_INSTRUCTION = `Anda adalah "Merqi", asisten AI resmi dari MERCURY (Platform Skrining Merkuri Kosmetik & Basis Data Komunitas Terbuka).
-Karakter: Ramah, empatik, edukatif, ilmiah namun mudah dipahami masyarakat awam, dan sangat peduli terhadap kesehatan kulit dan perlindungan konsumen.
-Bahasa: Bahasa Indonesia yang natural, hangat, dan profesional.
+  // Knowledge System Instruction for MERCURY Chatbot (Mercy)
+  const SYSTEM_INSTRUCTION = `Kamu adalah Mercy, asisten virtual MERCURY. Jawab dalam Bahasa Indonesia yang santai tapi sopan, singkat (maksimal 4-5 kalimat), tanpa istilah teknis berlebihan.
 
-Tugas dan Pengetahuan Utama:
-1. Cara Kerja Kit Kertas Uji Kolorimetri MERCURY:
-   - Ambil sampel krim/lotion secukupnya (seukuran biji jagung).
-   - Oleskan secara merata pada zona uji (lingkaran tengah) kertas reagen MERCURY.
-   - Diamkan selama 1-2 menit hingga reagen bereaksi dengan kemungkinan ion merkuri (Hg²⁺).
-   - Buka menu "Scan Kertas Uji" di aplikasi MERCURY, arahkan kamera tegak lurus dengan pencahayaan cukup agar 4 target kalibrasi warna terdeteksi.
-   - Aplikasi akan melakukan normalisasi RGB terhadap target referensi dan menghitung nilai pergeseran kroma (ΔE) serta perkiraan rentang kadar merkuri (ppm).
+Yang boleh dibahas:
+- Hg Test Kit: isi 5 strip kertas uji merkuri, 2 kartu referensi warna, 5 alat ambil sampel sekali pakai, panduan bergambar dan skala warna, kode batch dan QR. Harga di web adalah simulasi.
+- Cara pakai: ambil sampel, teteskan di zona tetes, tunggu sesuai panduan, foto bersama kartu referensi (cahaya cukup, tanpa flash, latar putih).
+- Arti status hasil: Tidak terdeteksi, Terindikasi, Perlu uji lanjut, Belum diuji.
+- Fitur web: Hasil Tes dari komunitas, Scan, tingkat kepercayaan data, Laporkan Data, sanggahan produsen.
+- Scan dan unggah hasil GRATIS untuk semua orang. Membeli kit di MERCURY tidak wajib; kertas dari sumber lain boleh dipakai, hasilnya diberi catatan dan tingkat kepercayaan lebih rendah.
+- Informasi umum tentang bahaya merkuri secara singkat.
 
-2. Bahaya Merkuri (Hg) pada Kosmetik:
-   - Merkuri sering disalahgunakan dalam krim pemutih instan ilegal karena menghambat enzim tirosinase sehingga produksi pigmen melanin terhenti secara paksa.
-   - Bahaya jangka pendek: iritasi kulit, rasa panas/terbakar, kemerahan, kulit menipis, timbul jerawat parah saat berhenti, dan hiperpigmentasi rebound (flek hitam memburuk).
-   - Bahaya jangka panjang: merkuri diserap ke aliran darah, merusak ginjal (proteinuria, gagal ginjal), kerusakan sistem saraf pusat (tremor, insomnia, kecemasan, hilang ingatan), dan bagi ibu hamil dapat menembus plasenta memicu mikrosefali serta cacat permanen pada janin.
-   - Batas aman BPOM & WHO: Kadar merkuri pada kosmetik TIDAK BOLEH melebihi 1 ppm (1 mg/kg) atau dilarang sengaja ditambahkan (0%).
-
-3. Ciri-ciri Kosmetik yang Patut Dicurigai Mengandung Merkuri:
-   - Tekstur lengket, tidak rata, atau memisah antara minyak dan padatan jika didiamkan.
-   - Warna putih mengkilap seperti mutiara (pearlescent) atau kuning mencolok tanpa izin BPOM.
-   - Berbau logam menyengat atau parfum sangat tajam untuk menyamarkan bau logam.
-   - Janji hasil tidak masuk akal: "Putih glowing instan dalam 3-7 hari".
-   - Tidak ada nomor notifikasi BPOM resmi (format NA/NB/NC/ND diikuti 11 digit angka), komposisi lengkap, atau nama produsen yang jelas.
-
-4. Verifikasi BPOM Resmi:
-   - Konsumen disarankan mengecek nomor izin edar di cekbpom.pom.go.id atau aplikasi BPOM Mobile.
-
-5. Fitur Aplikasi MERCURY:
-   - Beranda: Edukasi, statistik, dan pencarian cepat.
-   - Scan Kertas Uji: Skrining otomatis kertas reagen kit MERCURY & kertas mandiri.
-   - Basis Data: Direktori terbuka hasil tes komunitas.
-   - Toko Kit Uji: Pemesanan kit strip uji resmi (Starter Kit, Family Safety Pack, Bulk Lab Pack).
-   - Akun: Menyimpan riwayat tes pribadi dan status pesanan.
-
-Pedoman Menjawab:
-- Berikan jawaban yang terstruktur, rapi, dan mudah dibaca (gunakan bullet points jika perlu).
-- Selalu ingatkan bahwa skrining kolorimetri adalah deteksi dini berbasis presisi visual/kimia lapangan, sedangkan pengujian definitif hukum dilakukan oleh laboratorium BPOM dengan spektrometri AAS/ICP-MS.
-- Jangan berikan resep obat medis, sarankan konsultasi ke dokter spesialis kulit (Sp.DVE) jika ada keluhan alergi/iritasi parah.`;
+Aturan wajib:
+1. Selalu sebut hasil sebagai "skrining awal", bukan konfirmasi laboratorium. Jangan pernah bilang produk "pasti aman", "pasti berbahaya", "palsu", atau "terbukti". Gunakan "terindikasi" dan "tidak terdeteksi".
+2. Jangan menyebut akurasi atau angka sensitivitas kit. Jika ditanya, jawab bahwa kit masih tahap prototipe dan validasi laboratorium sedang direncanakan.
+3. Jangan mengarang data produk. Jika produk tidak ada di Hasil Tes, jawab "Belum ada data untuk produk ini", lalu ajak pengguna mengujinya atau cek BPOM di cekbpom.pom.go.id.
+4. Jangan memberi diagnosis atau saran pengobatan. Jika pengguna merasa sakit atau terpapar, sarankan segera ke dokter atau fasilitas kesehatan.
+5. Jika hasil terindikasi, sarankan: hentikan pemakaian, konfirmasi ke laboratorium terakreditasi, laporkan ke BPOM.
+6. Jangan menyebut kelebihan palsu: tidak ada "prioritas" atau "akses khusus" bagi pembeli kit.
+7. Jangan meminta data pribadi (nama lengkap, alamat, nomor HP) di chat.
+8. Jika pertanyaan di luar topik (skincare umum, hal lain), jawab singkat bahwa Mercy fokus pada skrining merkuri, lalu arahkan kembali.
+9. Jangan menyebut dirimu "Merqi" atau nama lama apa pun.`;
 
   // Server-side Chat API
   app.post('/api/chat', async (req, res) => {
@@ -97,7 +78,7 @@ Pedoman Menjawab:
           contents.push({ role: 'user', parts: [{ text: message }] });
 
           const response = await ai.models.generateContent({
-            model: 'gemini-3.8-flash',
+            model: 'gemini-2.5-flash',
             contents,
             config: {
               systemInstruction: SYSTEM_INSTRUCTION,
@@ -115,24 +96,28 @@ Pedoman Menjawab:
         }
       }
 
-      // Offline / Intelligent fallback response when key is pending
+      // Offline / Intelligent fallback response
       const lower = message.toLowerCase();
       let fallbackReply = '';
 
-      if (lower.includes('cara pakai') || lower.includes('cara guna') || lower.includes('cara menguji') || lower.includes('cara test') || lower.includes('cara tes')) {
-        fallbackReply = `Berikut langkah mudah menguji kosmetik dengan Kit Uji MERCURY:\n\n1. **Siapkan Kertas Uji**: Letakkan kertas reagen MERCURY di area datar dengan pencahayaan cukup.\n2. **Oleskan Sampel**: Ambil krim/lotion secukupnya (seukuran biji jagung) lalu oleskan merata pada lingkaran reagen di bagian tengah.\n3. **Tunggu Reaksi**: Diamkan selama 1-2 menit agar reagen bereaksi dengan kemungkinan ion merkuri (Hg²⁺).\n4. **Buka Menu Scan**: Arahkan kamera aplikasi MERCURY tegak lurus sehingga 4 target kalibrasi warna terdeteksi.\n5. **Hasil Otomatis**: Aplikasi membaca pergeseran warna (ΔE), menghitung perkiraan kadar ppm merkuri, dan menampilkan status keamanannya.`;
-      } else if (lower.includes('bahaya') || lower.includes('efek') || lower.includes('racun') || lower.includes('rusak') || lower.includes('dampak')) {
-        fallbackReply = `Merkuri (Hg) adalah logam berat beracun yang dilarang keras dalam kosmetik. Berikut bahaya utamanya:\n\n• **Pada Kulit**: Mengikis pelindung kulit (*skin barrier*), sensasi panas perih, alergi parah, dan memicu *ochronosis* (flek hitam permanen akibat kerusakan sel melanosit).\n• **Pada Ginjal & Saraf**: Merkuri terserap pori-pori menuju darah, merusak tubulus ginjal (*nefrotoksisitas*), serta mengganggu saraf pusat (tremor, insomnia, depresi).\n• **Pada Ibu Hamil & Janin**: Merkuri menembus plasenta dan barrier darah-otak janin, berisiko menyebabkan mikrosefali dan cacat fisik bawaan.\n\nSesuai standar BPOM dan WHO, batas toleransi kontaminan kosmetik adalah di bawah 1 ppm.`;
-      } else if (lower.includes('ciri') || lower.includes('tanda') || lower.includes('krim abal') || lower.includes('warna krim') || lower.includes('tekstur')) {
-        fallbackReply = `Ciri-ciri kosmetik yang patut dicurigai mengandung merkuri:\n\n1. **Warna Mengkilap Tak Alami**: Berwarna putih mengkilat mutiara (*pearlescent*) atau kuning terang mencolok.\n2. **Tekstur Lengket / Memisah**: Krim terasa lengket, kasar/berbutir, dan minyak terpisah jika disimpan beberapa hari.\n3. **Bau Logam Kuat**: Tercium aroma logam khas, terkadang disamarkan dengan wangi parfum kimia yang sangat tajam.\n4. **Klaim Putih Kilat**: Menjanjikan kulit putih seketika dalam 3-7 hari.\n5. **Izin BPOM Fiktif / Tidak Ada**: Tidak memiliki nomor notifikasi resmi BPOM (format NA diikuti 11 digit angka) yang terdaftar di cekbpom.pom.go.id.`;
-      } else if (lower.includes('bpom') || lower.includes('izin') || lower.includes('legal') || lower.includes('asli')) {
-        fallbackReply = `Untuk memastikan keamanan dan izin edar produk kosmetik Anda:\n\n1. Cari nomor **Notifikasi BPOM** pada label atau kemasan (contoh: **NA18230101234**).\n2. Buka situs resmi **[cekbpom.pom.go.id](https://cekbpom.pom.go.id)** atau unduh aplikasi **BPOM Mobile**.\n3. Masukkan nomor notifikasi atau nama merek. Pastikan status izin aktif dan nama pendaftar sesuai dengan kemasan asli.\n4. Anda juga dapat memeriksa riwayat uji independen komunitas di menu **Basis Data** aplikasi MERCURY.`;
-      } else if (lower.includes('beli') || lower.includes('order') || lower.includes('pesan') || lower.includes('harga') || lower.includes('toko') || lower.includes('kit')) {
-        fallbackReply = `Anda dapat memesan kit kertas uji resmi langsung di menu **Toko Kit Uji** aplikasi MERCURY:\n\n• **Starter Kit Konsumen** (5 strip uji + kartu kalibrasi): Ideal untuk cek skincare pribadi.\n• **Family Safety Pack** (15 strip uji): Pilihan hemat untuk perlindungan keluarga.\n• **Lab & Educator Bulk Pack** (50 strip uji): Dirancang untuk pengujian berkala dan komunitas.\n\nSetiap strip dilengkapi reagen kolorimetri terstandarisasi dan target kalibrasi RGB presisi tinggi.`;
-      } else if (lower.includes('halo') || lower.includes('hai') || lower.includes('siapa') || lower.includes('selamat')) {
-        fallbackReply = `Halo! Saya **Merqi**, asisten virtual cerdas MERCURY. 👋🔬\n\nSaya siap membantu Anda seputar:\n• Panduan penggunaan kit uji kertas kolorimetri MERCURY\n• Bahaya dan ciri-ciri kosmetik bermerkuri\n• Cara verifikasi izin BPOM resmi\n• Penjelasan hasil scan dan status keamanan produk\n\nAda yang ingin Anda tanyakan seputar keamanan kosmetik hari ini?`;
+      if (lower.includes('cara pakai') || lower.includes('langkah') || lower.includes('cara guna') || lower.includes('cara uji') || lower.includes('cara tes')) {
+        fallbackReply = 'Untuk pakai Hg Test Kit, ambil sedikit sampel krim pakai alat sekali pakai, lalu teteskan di zona tetes pada kertas uji. Tunggu reaksinya sesuai durasi di panduan bergambar. Setelah itu, foto bersama kartu referensi warna di cahaya cukup tanpa flash dan latar putih lewat menu Scan. Ingat ya, hasil ini adalah skrining awal, bukan pengganti uji laboratorium!';
+      } else if (lower.includes('arti') && lower.includes('terindikasi')) {
+        fallbackReply = 'Status "Terindikasi" berarti reaksi warna pada kertas uji menunjukkan kemungkinan adanya kandungan merkuri pada sampel skrining awal. Ini bukan konfirmasi laboratorium definitif. Jika hasil terindikasi, sebaiknya segera hentikan pemakaian produk, lakukan konfirmasi ke laboratorium terakreditasi, dan laporkan ke BPOM.';
+      } else if (lower.includes('tempat lain') || lower.includes('kertas lain') || (lower.includes('boleh') && lower.includes('kertas'))) {
+        fallbackReply = 'Tentu boleh! Scan dan unggah hasil di MERCURY gratis untuk semua orang, dan kamu tidak wajib membeli kit di sini. Kalau kamu memakai kertas dari sumber lain, hasilnya tetap bisa diunggah namun akan diberi catatan khusus dan tingkat kepercayaan data yang lebih rendah.';
+      } else if (lower.includes('harus apa') || (lower.includes('kalau') && lower.includes('terindikasi')) || (lower.includes('jika') && lower.includes('terindikasi'))) {
+        fallbackReply = 'Jika hasil skrining awal terindikasi merkuri, pertama segera hentikan pemakaian produk. Kedua, lakukan konfirmasi ke laboratorium terakreditasi untuk memastikan kandungannya. Terakhir, laporkan temuan tersebut ke BPOM. Jika kulitmu terasa sakit atau iritasi, segera konsultasikan ke dokter atau fasilitas kesehatan ya.';
+      } else if (lower.includes('akurasi') || lower.includes('sensitivitas') || lower.includes('berapa persen')) {
+        fallbackReply = 'Hg Test Kit saat ini masih dalam tahap prototipe dan validasi laboratorium sedang direncanakan, jadi kami tidak menyebutkan angka sensitivitas atau akurasi tertentu. Pengujian ini difungsikan sebagai skrining awal mandiri bagi masyarakat.';
+      } else if (lower.includes('isi kit') || lower.includes('hg test kit') || lower.includes('beli') || lower.includes('harga')) {
+        fallbackReply = 'Hg Test Kit berisi 5 strip kertas uji merkuri, 2 kartu referensi warna, 5 alat ambil sampel sekali pakai, panduan bergambar dan skala warna, serta kode batch MRC-2026-A05 dan QR. Kit ini bisa mengecek satu rangkaian skincare-mu (krim siang, krim malam, toner, serum, sabun). Harga di web merupakan harga simulasi untuk prototipe.';
+      } else if (lower.includes('bahaya') || lower.includes('efek') || lower.includes('racun')) {
+        fallbackReply = 'Merkuri adalah logam berat berbahaya yang dilarang dalam kosmetik. Pemakaiannya bisa merusak lapisan pelindung kulit, memicu flek hitam yang sulit hilang, serta terserap ke tubuh dan berisiko merusak ginjal serta sistem saraf. Pastikan selalu mengecek nomor izin edar di cekbpom.pom.go.id ya!';
+      } else if (lower.includes('halo') || lower.includes('hai') || lower.includes('siapa kamu')) {
+        fallbackReply = 'Hai, aku Mercy, asisten MERCURY! Aku bisa bantu soal cara pakai Hg Test Kit, arti hasil tes, dan cara baca Hasil Tes dari komunitas. Mau tanya apa?';
       } else {
-        fallbackReply = `Terima kasih atas pertanyaannya! Sebagai asisten skrining kosmetik MERCURY, saya dapat membantu Anda:\n\n1. Memandu cara menguji sampel krim di menu **Scan Kertas Uji**.\n2. Mengecek apakah produk Anda sudah pernah diuji teman komunitas di menu **Basis Data**.\n3. Menjelaskan ciri-ciri kosmetik berbahaya dan cara cek izin resmi BPOM.\n\nSilakan tanyakan hal spesifik seperti: *\"Bagaimana cara pakai kit uji?\"*, *\"Apa bahaya merkuri?\"*, atau *\"Ciri-ciri krim bermerkuri?\"*.`;
+        fallbackReply = 'Hai! Mercy fokus membantu skrining awal merkuri dan fitur di MERCURY. Kamu bisa tanya cara pakai Hg Test Kit, arti status hasil seperti Terindikasi, atau cara baca Hasil Tes komunitas. Ada yang ingin kamu tanyakan seputar skrining merkuri?';
       }
 
       return res.json({ reply: fallbackReply });
@@ -140,7 +125,7 @@ Pedoman Menjawab:
       console.error('Chat error:', err);
       return res.status(500).json({
         error: 'Terjadi kendala saat memproses respons.',
-        fallbackReply: 'Maaf, terjadi kendala saat memproses pertanyaan. Anda dapat mengecek menu Scan atau Basis Data untuk informasi lebih lanjut.'
+        fallbackReply: 'Maaf, terjadi kendala saat memproses pertanyaan. Silakan coba kembali atau gunakan menu Scan dan Hasil Tes.'
       });
     }
   });
