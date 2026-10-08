@@ -24,7 +24,7 @@ export const HG_TEST_KIT: SingleProductKit = {
     "Panduan bergambar dan skala warna",
     "Kode batch dan QR"
   ],
-  image: "illustration-hg-test-kit"
+  image: "/Hg_Test_Kit_Web.png"
 };
 
 export const TEST_KIT_PACKAGES: KitPackage[] = [

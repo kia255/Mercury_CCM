@@ -24,6 +24,7 @@ interface NavbarProps {
   onOpenAuth?: (mode?: 'login' | 'register') => void;
   onLogout?: () => void;
   onOpenChat?: () => void;
+  onOpenSplashOnboarding?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -34,7 +35,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   currentUser = null,
   onOpenAuth,
   onLogout,
-  onOpenChat
+  onOpenChat,
+  onOpenSplashOnboarding
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -61,8 +63,15 @@ export const Navbar: React.FC<NavbarProps> = ({
           
           {/* Logo & Brand with User's Official Design */}
           <div 
-            onClick={() => handleNavClick('beranda')}
+            onClick={() => {
+              if (currentTab === 'beranda') {
+                onOpenSplashOnboarding?.();
+              } else {
+                handleNavClick('beranda');
+              }
+            }}
             className="flex items-center gap-3 cursor-pointer group"
+            title="MERCURY"
           >
             <div className="group-hover:scale-105 transition-transform duration-200">
               <MercuryLogo variant="full" size={42} />

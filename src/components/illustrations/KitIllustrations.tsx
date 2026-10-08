@@ -6,13 +6,19 @@ interface KitIllustrationProps {
 }
 
 export const KitIllustration: React.FC<KitIllustrationProps> = ({ packageId, className = "w-full h-full" }) => {
-  if (packageId === 'hg-test-kit' || packageId === 'pkg-5') {
-    return <HgTestKitIllustration className={className} />;
-  }
-  if (packageId === 'pkg-1') {
-    return <StarterPackIllustration className={className} />;
-  }
-  return <HgTestKitIllustration className={className} />;
+  return (
+    <div className={`relative overflow-hidden rounded-xl bg-slate-50 flex items-center justify-center p-1 ${className}`}>
+      <img
+        src="/Hg_Test_Kit_Web.png"
+        alt="Hg Test Kit"
+        className="w-full h-full object-contain select-none"
+        referrerPolicy="no-referrer"
+        onError={(e) => {
+          (e.currentTarget as HTMLImageElement).src = '/hg-test-kit.png';
+        }}
+      />
+    </div>
+  );
 };
 
 /**
@@ -323,6 +329,25 @@ export const CommunityPackIllustration: React.FC<{ className?: string }> = ({ cl
  * - Corner badge: "Ilustrasi produk"
  */
 export const HgTestKitIllustration: React.FC<{ className?: string; large?: boolean }> = ({ 
+  className = "w-full h-full",
+  large = false 
+}) => {
+  return (
+    <div className={`relative overflow-hidden rounded-2xl sm:rounded-3xl bg-slate-50 border border-slate-200/90 flex items-center justify-center p-3 sm:p-5 select-none ${className}`}>
+      <img
+        src="/Hg_Test_Kit_Web.png"
+        alt="Hg Test Kit MERCURY - 5 Strip Uji Merkuri"
+        className={`w-full h-full object-contain ${large ? 'max-h-[440px]' : 'max-h-56'} drop-shadow-sm select-none`}
+        referrerPolicy="no-referrer"
+        onError={(e) => {
+          (e.currentTarget as HTMLImageElement).src = '/hg-test-kit.png';
+        }}
+      />
+    </div>
+  );
+};
+
+export const SvgHgTestKitIllustration: React.FC<{ className?: string; large?: boolean }> = ({ 
   className = "w-full h-full",
   large = false 
 }) => {

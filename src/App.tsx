@@ -22,6 +22,7 @@ import { ReportDataModal } from './components/modals/ReportDataModal';
 import { ManufacturerObjectionModal } from './components/modals/ManufacturerObjectionModal';
 import { CartModal } from './components/shop/CartModal';
 import { AuthModal } from './components/auth/AuthModal';
+import { SplashOnboardingModal } from './components/onboarding/SplashOnboardingModal';
 import { ChatbotWidget } from './components/chat/ChatbotWidget';
 
 // Types & Data
@@ -120,6 +121,16 @@ export default function App() {
   const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isChatOpen, setIsChatOpen] = useState(false);
+
+  // Splash Screen & Onboarding State (shown on first app open, or when user clicks logo on Beranda)
+  const [isSplashOnboardingOpen, setIsSplashOnboardingOpen] = useState<boolean>(() => {
+    try {
+      const hasSeen = localStorage.getItem('mercury_has_seen_intro');
+      return !hasSeen;
+    } catch {
+      return false;
+    }
+  });
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -275,6 +286,7 @@ export default function App() {
         onOpenAuth={handleOpenAuth}
         onLogout={handleLogout}
         onOpenChat={() => setIsChatOpen(true)}
+        onOpenSplashOnboarding={() => setIsSplashOnboardingOpen(true)}
       />
 
       {/* Toast Notification */}
@@ -312,6 +324,7 @@ export default function App() {
                 }}
                 onSearchSubmit={(q) => setSearchQuery(q)}
                 onSelectProduct={handleOpenProductDetail}
+                onOpenSplashOnboarding={() => setIsSplashOnboardingOpen(true)}
               />
             )}
 
@@ -445,6 +458,20 @@ export default function App() {
         onClose={() => setIsAuthModalOpen(false)}
         onSuccess={handleLogin}
         initialMode={authModalMode}
+      />
+
+      {/* Splash Screen & Onboarding 1 Modal (First time launch or clicking Logo in Beranda) */}
+      <SplashOnboardingModal
+        isOpen={isSplashOnboardingOpen}
+        onClose={() => setIsSplashOnboardingOpen(false)}
+        onDirectToRegister={() => {
+          setIsSplashOnboardingOpen(false);
+          handleOpenAuth('register');
+        }}
+        onDirectToLogin={() => {
+          setIsSplashOnboardingOpen(false);
+          handleOpenAuth('login');
+        }}
       />
 
       {/* Asisten Chatbot MERCURY (Mercy) */}

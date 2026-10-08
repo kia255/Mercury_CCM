@@ -8,11 +8,12 @@ import {
   ArrowRight,
   ShieldAlert,
   FileCheck2,
-  HelpCircle
+  HelpCircle,
+  ZoomIn,
+  X
 } from 'lucide-react';
 import { KitPackage } from '../../types';
 import { HG_TEST_KIT } from '../../data/mockShop';
-import { HgTestKitIllustration } from '../illustrations/KitIllustrations';
 
 interface ShopViewProps {
   onAddToCart: (pkg: KitPackage, quantity?: number) => void;
@@ -26,6 +27,10 @@ export const ShopView: React.FC<ShopViewProps> = ({
   onOpenCart
 }) => {
   const [addedToast, setAddedToast] = useState(false);
+  const [isPhotoZoomed, setIsPhotoZoomed] = useState(false);
+
+  const productPhotoUrl = "/Hg_Test_Kit_Web.png";
+  const fallbackPhotoUrl = "/hg-test-kit.png";
 
   const handleAdd = () => {
     onAddToCart(HG_TEST_KIT, 1);
@@ -65,11 +70,42 @@ export const ShopView: React.FC<ShopViewProps> = ({
       <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-5 sm:p-8 lg:p-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           
-          {/* KIRI: GAMBAR PRODUK BESAR (Dengan label kecil "Ilustrasi produk") */}
+          {/* KIRI: FOTO PRODUK ASLI RESMI (Uncropped / Tidak Terpotong) */}
           <div className="lg:col-span-7 flex flex-col justify-center">
-            <div className="w-full h-full min-h-[340px] sm:min-h-[400px] lg:min-h-[460px]">
-              <HgTestKitIllustration large className="w-full h-full min-h-[340px] sm:min-h-[400px] lg:min-h-[460px]" />
+            <div 
+              onClick={() => setIsPhotoZoomed(true)}
+              className="relative w-full rounded-2xl sm:rounded-3xl bg-slate-50 border border-slate-200/90 p-4 sm:p-6 lg:p-8 flex items-center justify-center cursor-zoom-in group transition-all hover:border-teal-300 hover:shadow-md overflow-hidden"
+              title="Klik untuk memperbesar foto produk"
+            >
+              {/* Badge Foto Resmi Produk */}
+              <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-10 px-3 py-1.5 rounded-xl bg-white/95 backdrop-blur-md text-[11px] font-bold text-slate-700 border border-slate-200/90 shadow-xs flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span>Foto Resmi Hg Test Kit</span>
+              </div>
+
+              {/* Tombol Perbesar Foto */}
+              <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 z-10 px-3 py-1.5 rounded-xl bg-white/95 backdrop-blur-md text-[11px] font-bold text-slate-700 border border-slate-200/90 shadow-xs flex items-center gap-1.5 group-hover:bg-[#0F4C5C] group-hover:text-white transition-colors">
+                <ZoomIn size={14} />
+                <span>Perbesar Foto</span>
+              </div>
+
+              {/* Gambar Produk */}
+              <div className="w-full flex items-center justify-center min-h-[300px] sm:min-h-[380px] lg:min-h-[440px]">
+                <img
+                  src={productPhotoUrl}
+                  alt="Hg Test Kit MERCURY - 5 Strip Uji Merkuri Lengkap"
+                  className="w-full h-auto max-h-[360px] sm:max-h-[420px] lg:max-h-[460px] object-contain rounded-xl drop-shadow-sm select-none transition-transform duration-300 group-hover:scale-[1.02]"
+                  referrerPolicy="no-referrer"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src = fallbackPhotoUrl;
+                  }}
+                />
+              </div>
             </div>
+            
+            <p className="text-center text-[11px] text-slate-400 font-medium mt-2">
+              Foto menampilkan seluruh kelengkapan isi kit: kemasan pelindung, 5 strip uji merkuri, kartu skala komparasi warna, dan pipet/spatula sampel.
+            </p>
           </div>
 
           {/* KANAN: NAMA, DESKRIPSI, HARGA, JUMLAH, TOMBOL, DAFTAR ISI */}
@@ -210,6 +246,64 @@ export const ShopView: React.FC<ShopViewProps> = ({
       <div className="text-center py-3.5 px-4 rounded-2xl bg-slate-100/80 border border-slate-200 text-xs sm:text-sm text-slate-600 font-semibold leading-relaxed">
         Hasil MERCURY adalah skrining awal, bukan pengganti uji laboratorium.
       </div>
+
+      {/* ========================================================================= */}
+      {/* 5. LIGHTBOX / MODAL FOTO UTUH TANPA TERPOTONG                             */}
+      {/* ========================================================================= */}
+      {isPhotoZoomed && (
+        <div 
+          onClick={() => setIsPhotoZoomed(false)}
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/85 backdrop-blur-md animate-fadeIn cursor-zoom-out"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="relative bg-white rounded-3xl max-w-4xl w-full p-4 sm:p-6 shadow-2xl border border-slate-200/80 flex flex-col items-center gap-4 cursor-default"
+          >
+            {/* Header modal */}
+            <div className="w-full flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                <h3 className="font-extrabold text-sm sm:text-base text-slate-800">
+                  Foto Resmi Hg Test Kit (Tampilan Lengkap)
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsPhotoZoomed(false)}
+                className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                aria-label="Tutup foto"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Foto Utuh Besar Resolusi Penuh */}
+            <div className="w-full bg-slate-50 rounded-2xl border border-slate-200/80 p-2 sm:p-4 flex items-center justify-center overflow-hidden max-h-[75vh]">
+              <img
+                src={productPhotoUrl}
+                alt="Hg Test Kit MERCURY - 5 Strip Uji Merkuri Lengkap"
+                className="max-h-[70vh] w-auto max-w-full object-contain rounded-xl select-none"
+                referrerPolicy="no-referrer"
+                onError={(e) => {
+                  (e.currentTarget as HTMLImageElement).src = fallbackPhotoUrl;
+                }}
+              />
+            </div>
+
+            {/* Keterangan detail isi */}
+            <div className="w-full flex flex-wrap items-center justify-between text-xs text-slate-500 font-medium px-1">
+              <span>Isi: 5 strip uji, 2 kartu referensi, 5 alat sampling sekali pakai</span>
+              <button
+                type="button"
+                onClick={() => setIsPhotoZoomed(false)}
+                className="font-bold text-[#0F4C5C] hover:underline cursor-pointer"
+              >
+                Tutup Pratinjau
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

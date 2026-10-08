@@ -23,13 +23,15 @@ interface HomeViewProps {
   onNavigate: (tab: string) => void;
   onSearchSubmit: (query: string) => void;
   onSelectProduct: (product: ProductItem) => void;
+  onOpenSplashOnboarding?: () => void;
 }
 
 export const HomeView: React.FC<HomeViewProps> = ({
   products,
   onNavigate,
   onSearchSubmit,
-  onSelectProduct
+  onSelectProduct,
+  onOpenSplashOnboarding
 }) => {
   const [searchInput, setSearchInput] = useState('');
 
@@ -63,7 +65,13 @@ export const HomeView: React.FC<HomeViewProps> = ({
           
           {/* Logo Brand Showcase & Friendly Greeting */}
           <div className="flex flex-col items-center justify-center gap-3">
-            <div className="px-5 py-3.5 bg-white rounded-2xl border border-white shadow-xl inline-flex items-center justify-center hover:scale-105 transition-transform duration-300">
+            <div 
+              onClick={onOpenSplashOnboarding}
+              role="button"
+              tabIndex={0}
+              title="MERCURY"
+              className="px-5 py-3.5 bg-white rounded-2xl border border-white shadow-xl inline-flex items-center justify-center hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer group"
+            >
               <MercuryLogo variant="full" size={48} />
             </div>
 
